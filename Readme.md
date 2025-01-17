@@ -30,7 +30,7 @@ Una aplicación web simple y elegante para generar enlaces personalizados de reu
 
 1. Clona el repositorio:
 ```bash
-git clone [URL_DEL_REPOSITORIO]
+git clone https://github.com/cencomer/GneradorJitsi.git
 ```
 
 2. Abre el archivo `index.html` en tu navegador web preferido
@@ -92,3 +92,4 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.m
 
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Jitsi Meet](https://meet.jit.si/)
+- [Cencomer.com](https://cencomer.com/)
