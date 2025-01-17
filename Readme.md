@@ -62,7 +62,7 @@ async function generateMeeting() {
     // Genera un UUID único para cada reunión
     const uuid = crypto.randomUUID();
     const meetingName = `${user}-${uuid}`;
-    const meetingLink = `https://jitsi.si/${meetingName}`;
+    const meetingLink = `https://meet.jit.si/${meetingName}`;
 }
 ```
 
