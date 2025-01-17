@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Generador de enlaces para reuniones Jitsi">
+    <title>Generador de Enlaces de Jitsi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Agregar configuración personalizada de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#64748b',
+                        success: '#22c55e',
+                        error: '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">
+                Generador de Enlaces de Reunión Jitsi
+            </h1>
+            <p class="text-gray-600">
+                Crea enlaces personalizados para tus reuniones de forma rápida y sencilla
+            </p>
+        </header>
+
+        <main>
+            <!-- Formulario Principal -->
+            <form id="form" class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <!-- Campo Organizador -->
+                <div class="mb-4">
+                    <label for="organizer" class="block text-gray-700 font-medium mb-2">
+                        Organizador
+                    </label>
+                    <input type="text" id="organizer" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Nombre del organizador">
+                </div>
+
+                <!-- Campo Usuario -->
+                <div class="mb-4">
+                    <label for="user" class="block text-gray-700 font-medium mb-2">
+                        Usuario para la reunión
+                    </label>
+                    <input type="text" id="user" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Nombre de usuario">
+                </div>
+
+                <!-- Campo Empresa -->
+                <div class="mb-6">
+                    <label for="company" class="block text-gray-700 font-medium mb-2">
+                        Empresa (opcional)
+                    </label>
+                    <input type="text" id="company"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Nombre de la empresa">
+                </div>
+
+                <!-- Configuración de la Reunión -->
+                <div class="bg-gray-50 p-4 rounded-md mb-6">
+                    <h3 class="text-lg font-medium text-gray-700 mb-4">Configuración de la Reunión</h3>
+
+                    <div class="space-y-3">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" id="enablePassword"
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="text-gray-700">Proteger con contraseña</span>
+                        </label>
+
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" id="muteOnEntry" checked
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="text-gray-700">Silenciar al entrar</span>
+                        </label>
+
+                        <div class="flex items-center space-x-3">
+                            <input type="number" id="maxParticipants" min="2" max="100" value="10"
+                                class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <span class="text-gray-700">Máximo de participantes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón Generar -->
+                <button type="button" id="generateBtn"
+                    class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors duration-200 flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span>Generar Enlace</span>
+                </button>
+            </form>
+
+            <!-- Enlaces Generados -->
+            <div id="links" class="hidden bg-white rounded-lg shadow-md p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Enlaces Generados</h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-gray-700 font-medium mb-2">Enlace para la reunión:</p>
+                        <a href="#" id="meetingLink" target="_blank"
+                            class="text-primary hover:underline break-all block"></a>
+                    </div>
+
+                    <div>
+                        <p class="text-gray-700 font-medium mb-2">Enlace de administración:</p>
+                        <a href="#" id="adminLink" target="_blank" class="text-primary hover:underline">Ir a
+                            administración</a>
+                    </div>
+
+                    <button id="copyBtn"
+                        class="bg-success text-white py-2 px-4 rounded-md hover:bg-success/90 transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        <span>Copiar Mensaje</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reuniones Recientes -->
+            <section id="recentMeetings" class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Reuniones Recientes</h2>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 space-y-4"></div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            const bgColor = type === 'success' ? 'bg-success' : 'bg-error';
+            toast.className = `${bgColor} text-white px-6 py-3 rounded-md shadow-lg transform transition-all duration-300 ease-in-out`;
+
+            toast.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${type === 'success'
+                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'}
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Animación de entrada
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function showLoading() {
+            const loader = document.createElement('div');
+            loader.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            loader.innerHTML = `
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+            `;
+            document.body.appendChild(loader);
+            return loader;
+        }
+
+        function validateForm() {
+            const organizer = document.getElementById('organizer').value.trim();
+            const user = document.getElementById('user').value.trim();
+
+            if (organizer.length < 3) {
+                showToast('El nombre del organizador debe tener al menos 3 caracteres', 'error');
+                return false;
+            }
+
+            if (user.length < 3) {
+                showToast('El nombre de usuario debe tener al menos 3 caracteres', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function saveRecentMeeting(meetingData) {
+            const recentMeetings = JSON.parse(localStorage.getItem('recentMeetings') || '[]');
+            recentMeetings.unshift(meetingData);
+            localStorage.setItem('recentMeetings', JSON.stringify(recentMeetings.slice(0, 5)));
+            displayRecentMeetings();
+        }
+
+        function displayRecentMeetings() {
+            const recentMeetings = JSON.parse(localStorage.getItem('recentMeetings') || '[]');
+            const recentList = document.getElementById('recentMeetings');
+
+            if (recentMeetings.length === 0) {
+                recentList.innerHTML = `
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Reuniones Recientes</h2>
+                    <p class="text-gray-600">No hay reuniones recientes</p>
+                `;
+                return;
+            }
+
+            recentList.innerHTML = `
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Reuniones Recientes</h2>
+                ${recentMeetings.map(meeting => `
+                    <div class="border-b border-gray-200 py-4 last:border-0">
+                        <div class="flex flex-col space-y-2">
+                            <p class="text-gray-700"><span class="font-medium">Organizador:</span> ${meeting.organizer}</p>
+                            <p class="text-gray-700"><span class="font-medium">Usuario:</span> ${meeting.user}</p>
+                            ${meeting.company ? `<p class="text-gray-700"><span class="font-medium">Empresa:</span> ${meeting.company}</p>` : ''}
+                            <a href="${meeting.link}" target="_blank" 
+                               class="text-primary hover:underline inline-flex items-center space-x-1">
+                                <span>Unirse a la reunión</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        async function generateMeeting() {
+            try {
+                if (!validateForm()) return;
+
+                const loader = showLoading();
+
+                const organizer = document.getElementById('organizer').value.trim();
+                const user = document.getElementById('user').value.trim();
+                const company = document.getElementById('company').value.trim();
+                const enablePassword = document.getElementById('enablePassword').checked;
+                const muteOnEntry = document.getElementById('muteOnEntry').checked;
+                const maxParticipants = document.getElementById('maxParticipants').value;
+
+                const uuid = crypto.randomUUID();
+                const meetingName = `${user}-${uuid}`;
+                const meetingLink = `https://jitsi.si/${meetingName}`;
+                const adminLink = `https://web-cdn.jitsi.net/auth-static/meet-jit-si/v11/signin.html?state=%7B%22room%22%3A%22${meetingName}%22%2C%22roomSafe%22%3A%22${meetingName}%22%2C%22config.prejoinConfig.enabled%22%3Afalse%7D#room=${meetingName}&subdir=`;
+
+                // Simular delay de red
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                document.getElementById('meetingLink').textContent = meetingLink;
+                document.getElementById('meetingLink').href = meetingLink;
+                document.getElementById('adminLink').href = adminLink;
+                document.getElementById('links').classList.remove('hidden');
+
+                const meetingData = {
+                    organizer,
+                    user,
+                    company,
+                    link: meetingLink,
+                    timestamp: new Date().toISOString()
+                };
+
+                saveRecentMeeting(meetingData);
+                loader.remove();
+                showToast('Reunión generada exitosamente');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('No se pudo generar la reunión. Por favor, intenta de nuevo.', 'error');
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('generateBtn').addEventListener('click', generateMeeting);
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const organizer = document.getElementById('organizer').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const meetingLink = document.getElementById('meetingLink').href;
+
+            const message = `Te invitan a una reunión en Jitsi:
+- Organizador: ${organizer}
+${company ? `- Empresa: ${company}` : ''}
+- Enlace: ${meetingLink}`;
+            navigator.clipboard.writeText(message)
+                .then(() => showToast('¡Mensaje copiado al portapapeles!'))
+                .catch(() => showToast('Error al copiar el mensaje', 'error'));
+        });
+
+        // Inicializar la visualización de reuniones recientes al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            displayRecentMeetings();
+        });
+    </script>
+</body>
+
+</html>
